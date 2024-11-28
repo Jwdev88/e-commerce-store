@@ -8,5 +8,6 @@ export default {
     extend: {},
   },
   plugins: [],
-  server : {port:5173}
+  server : {port:5173},
+  base : '/e-commerce-store/'
 }
