@@ -43,7 +43,7 @@ export const addToCart = async (req, res) => {
 // Mengupdate quantity item di cart
 export const updateCart = async (req, res) => {
   try {
-    const { userId, itemId, size,quantity } = req.body;
+    const { userId, itemId, size, quantity } = req.body;
     const userData = await userModel.findById(userId);
     let cartData = await userData.cartData;
 
@@ -54,5 +54,19 @@ export const updateCart = async (req, res) => {
   } catch (error) {
     console.log(error);
     res.json({ success: false, message: error.message });
+  }
+};
+
+// Menghapus item di cart
+export const clearCart = async (req, res) => {
+  try {
+    const userId = req.user._id// Asumsikan Anda menggunakan middleware authentication
+
+    await userModel.findByIdAndDelete(userId, { cartData: {} });
+
+    res.json({ success: true, message: "Cart cleared successfully" });
+  } catch (error) {
+    console.error("Error clearing cart:", error);
+    res.status(500).json({ success: false, message: "Failed to clear cart" });
   }
 };

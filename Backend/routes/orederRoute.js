@@ -8,6 +8,8 @@ import {
   allOrders,
   userOrders,
   updateStatus,
+  placeOrderMidtrans,
+  handleNotification
 } from "../controllers/orderController.js";
 
 const orderRouter = express.Router();
@@ -18,8 +20,9 @@ orderRouter.post("/status", adminAuth, updateStatus);
 //payment features
 orderRouter.post("/place", authUser, placeOrder);
 orderRouter.post("/stripe", authUser, placeOrderStripe);
+orderRouter.post("/midtrans", authUser, placeOrderMidtrans);
 orderRouter.post("/razorpay", authUser, placeOrderRazorpay);
-
+orderRouter.post('/midtrans-notification', handleNotification);
 //user featrues
 orderRouter.post("/userorders", authUser, userOrders);
 

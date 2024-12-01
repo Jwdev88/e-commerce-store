@@ -9,5 +9,5 @@ export default {
   },
   plugins: [],
   server : {port:5173},
-  base : '/e-commerce-store/'
+  // base : '/e-commerce-store'
 }

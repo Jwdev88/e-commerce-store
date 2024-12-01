@@ -1,16 +1,13 @@
-import React, { useContext, useEffect, useState } from 'react'
-import { ShopContext } from '../context/ShopContext'
-import Title from '../components/Title'
-import { assets } from '../assets/assets'
-import CartTotal from '../components/CartTotal'
+import React, { useContext, useEffect, useState } from 'react';
+import { ShopContext } from '../context/ShopContext';
+import Title from '../components/Title';
+import { assets } from '../assets/assets';
+import CartTotal from '../components/CartTotal';
+import { toast } from 'react-toastify';
+
 const Cart = () => {
-
-  const { products, currency, cartItems, updateQuanity, navigate } = useContext(ShopContext)
-
+  const { products, formatIDR, cartItems, updateQuanity, navigate, clearCart } = useContext(ShopContext);
   const [cartData, setCartData] = useState([]);
-
-
-
 
   useEffect(() => {
     if (products.length > 0) {
@@ -18,61 +15,102 @@ const Cart = () => {
       for (const items in cartItems) {
         for (const item in cartItems[items]) {
           if (cartItems[items][item]) {
+            const productData = products.find((product) => product._id === items);
             tempData.push({
-              _id: items, items,
+              _id: items,
+              items,
               size: item,
-              quantity: cartItems[items][item]
-
-            })  
+              quantity: cartItems[items][item],
+              totalPrice: productData.price * cartItems[items][item],
+            });
           }
         }
       }
       setCartData(tempData);
     }
-
-  }, [cartItems, products])
-
+  }, [cartItems, products]);
+  const handleClearCart = () => {
+    clearCart(); // Panggil fungsi clearCart dari context
+    toast.success('Cart cleared successfully');
+    
+  };
   return (
-    <div className='border-t pt-14'>
+    <div className="min-h-screen bg-gray-100 p-4">
+      <div className="max-w-7xl mx-auto bg-white p-6 rounded-lg shadow-md">
+        <div className="text-3xl font-bold text-center mb-4">
+          <Title text1={'Shopping'} text2={'Cart'} />
+        </div>
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          <div className="lg:col-span-2">
+            {cartData.map((item, index) => {
+              const productData = products.find((product) => product._id === item._id);
+              return (
+                <div
+                  key={index}
+                  className="relative py-4 border-b border-gray-300 text-gray-700 flex flex-col sm:flex-row justify-between items-center"
+                >
+                  <button
 
-      <div className='text-2xl pt-14'>
-        <Title text1={'TOTAL'} text2={'CART'} />
-      </div>
+                    onClick={() => updateQuanity(item._id, item.size, 0)}
+                    className="absolute top-0 right-0 mt-2 py-4 mr-2 text-gray-500 hover:text-gray-700"
+                  ><img onClick={() => updateQuanity(item._id, item.size, 0)} src={assets.cross_icon} className='w-4 mr-4 sm:w-5 cursor-pointer ' alt="" />
 
-      <div>
-        {
-          cartData.map((item, index) => {
-            const productData = products.find((product) => product._id === item._id)
 
-            return (
-              <div key={index} className='py-4 border-t border-b text-gray-700 grid grid-cols-[4fr_0.5fr_0.5fr] sm:grid-cols-[4fr_2fr_0.5fr] items-center gap-4'>
-                <div className='flex items-start gap-6'>
-                  <img className='w-16 sm:w-20' src={productData.image[0]} alt="" />
-                  <div>
-                    <p className='text-xs sm:text-lg font-medium'>{productData.name}</p>
-                    <div className='flex items-center gap-5 mt-2'>
-                      <p>{currency}{productData.price}</p>
-                      <p className='px-2 sm:px-3 sm:py-1 border bg-slate-50'>{item.size}</p>
+                  </button>
+                  <div className="flex items-start gap-4">
+                    <img className="w-48 h-72 object-cover rounded-lg" src={productData.image[0]} alt={productData.name} />
+                    <div className='mt-2 gap-4'>
+                      <p className="text-lg font-semibold">{productData.name}</p>
+                      <p className="font-medium text-gray-500">{productData.category}</p>
+                      <p className="font-medium text-gray-900">{formatIDR(productData.price)}</p>
+                      <p className="font-medium text-green-500">{item.size}</p>
                     </div>
                   </div>
+                  <div className="flex items-center mt-4 sm:mt-0">
+                    <select
+                      onChange={(e) =>
+                        e.target.value === '' || e.target.value === '0'
+                          ? null
+                          : updateQuanity(item._id, item.size, Number(e.target.value))
+                      }
+                      className="border border-gray-300 rounded-md p-2 text-gray-700 focus:outline-none focus:ring-2 focus:ring-purple-600 focus:border-transparent"
+                      defaultValue={item.quantity}
+                    >
+                      {[...Array(10).keys()].map((num) => (
+                        <option key={num} value={num + 1}>{num + 1}</option>
+                      ))}
+                    </select>
+                  </div>
                 </div>
-                <input onChange={(e) => e.target.value === '' || e.target.value === '0' ? null : updateQuanity(item._id, item.size, Number(e.target.value))} className='border max-w-10 sm:max-w-20 px-1 sm:px-2 py-1' min={1} defaultValue={item.quantity} type="number" />
-                <img onClick={() => updateQuanity(item._id, item.size, 0)} src={assets.bin_icon} className='w-4 mr-4 sm:w-5 cursor-pointer ' alt="" />
-              </div>
-            )
-          })
-        }
-      </div>
-      <div className='flex justify-end my-20'>
-        <div className='w-full sm:w-[450px]'>
-          <CartTotal />
-          <div className='w-full text-end'>
-            <button onClick={() => navigate('/place-order')} className='bg-black text-white text-sm my-8 px-8 py-3'>PROCEED TO CHECKOUT</button>
+              );
+            })}
+          </div>
+          <div className="bg-gray-50 p-6 rounded-lg shadow-md">
+            <CartTotal />
+            <div className="flex flex-col items-end gap-4 mt-6"> {/* Ubah flex-row ke flex-col dan tambahkan gap */}
+              <button
+                onClick={() => navigate('/place-order')}
+                className="bg-purple-600 text-white text-lg px-8 py-3 rounded-lg hover:bg-purple-700 transition duration-200 w-full" // Tambahkan w-full
+              >
+                Checkout
+              </button>
+              <button
+                onClick={handleClearCart}
+                className="bg-red-600 text-white text-lg px-8 py-3 rounded-lg hover:bg-red-700 transition duration-200 w-full" // Tambahkan w-full
+              >
+                Clear Cart
+              </button>
+            </div>
           </div>
         </div>
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default Cart
+
+
+
+
+
+export default Cart;

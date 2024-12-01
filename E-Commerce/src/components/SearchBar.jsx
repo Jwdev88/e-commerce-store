@@ -4,7 +4,8 @@ import { assets } from '../assets/assets';
 import { useLocation } from 'react-router-dom';
 const SearchBar = () => {
 
-    const {search, setSearch, showSearch, setShowSearch} = useContext(ShopContext);
+    const {search, setSearch, showSearch, setShowSearch} 
+    = useContext(ShopContext);
     const location = useLocation();
     const [visible,setVisible] = useState(false)
     useEffect(()=>{

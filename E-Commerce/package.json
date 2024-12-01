@@ -10,10 +10,12 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@arismun/format-rupiah": "^3.0.0",
     "@headlessui/react": "^2.2.0",
     "@heroicons/react": "^2.1.5",
     "@reduxjs/toolkit": "^2.3.0",
     "axios": "^1.7.7",
+    "midtrans-client": "^1.4.2",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "react-redux": "^9.1.2",

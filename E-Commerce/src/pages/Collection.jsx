@@ -5,7 +5,7 @@ import Title from '../components/Title';
 import ProductItem from '../components/Productitem';
 const Collection = () => {
 
-  const {products, search, showSearch} = useContext(ShopContext);
+  const {products, search, showSearch, setShowSearch} = useContext(ShopContext);
   const [showFilter,setShowFilter] = useState(false);
   const [filterProducts,setFilterProducts] = useState([]);
   const [category,setCategory] = useState ([]);
@@ -130,6 +130,7 @@ const Collection = () => {
               {
                 filterProducts.map((item,index)=>(
                   <ProductItem key={index} name={item.name} id={item._id} price={item.price} image={item.image}/>
+                  
                 ))
               }
            </div>
